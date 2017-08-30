@@ -1,0 +1,16 @@
+---
+title: "Untitled"
+author: "Andrew Pratt"
+output: pdf_document
+---
+
+# Central Limit Theorem simulation and a basic inferential analysis of the ToothGrowth dataset in R
+<br>
+
+```{r date, echo = FALSE}
+date <- Sys.Date()
+```
+
+Last updated: `date`
+<br>
+
