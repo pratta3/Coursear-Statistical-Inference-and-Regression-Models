@@ -13,6 +13,9 @@ data("ToothGrowth")
 
 ToothGrowth$dose <- factor(ToothGrowth$dose)
 
+library(RColorBrewer)
+library(ggplot2)
+
 theme <- theme(axis.text = element_text(size = 12),
                axis.title = element_text(size = 15),
                plot.title = element_text(size = 18, face = "bold"),
@@ -21,8 +24,7 @@ theme <- theme(axis.text = element_text(size = 12),
                legend.position = c(1,0),
                legend.justification = c(1,0))
 
-library(RColorBrewer)
-library(ggplot2)
+
 ggplot(ToothGrowth, aes(dose, len)) +
         geom_boxplot(aes(fill = supp)) +
         scale_fill_brewer(palette = "Paired",
@@ -41,17 +43,19 @@ ggplot(ToothGrowth, aes(dose, len)) +
 library(dplyr)
 doses <- c(.5, 1, 2)
 crit.value <- rep(.05, 3)*1:3/3
+t.stat <- rep(NA, 3)
 p.value <- rep(NA, 3)
 mean.diff <- rep(NA, 3)
 
 for(i in 1:3){
         subset <- ToothGrowth %>% filter(dose == doses[i])
-        test <- with(subset, t.test(len[supp == "OJ"], len[supp == "VC"], var.equal = TRUE))
+        test <- with(subset, t.test(len[supp == "OJ"], len[supp == "VC"]))
+        t.stat[i] <- test$statistic
         p.value[i] <- test$p.value
         mean.diff[i] <- with(test, estimate[1] - estimate[2])
 }
 
-p.values <- data.frame(doses, p.value, crit.value, mean.diff) %>% arrange(p.value)
+p.values <- data.frame(doses, t.stat, p.value, crit.value, mean.diff) %>% arrange(p.value)
 p.values <- p.values %>% mutate(sig = ifelse(p.value <= crit.value, "REJECT", "ACCEPT"))
 p.values
 
